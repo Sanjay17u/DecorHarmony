@@ -79,6 +79,9 @@ const Login = () => {
                         </Button>
                       )
                     }
+                    <div className="mt-4">
+                        <Link to="/forgot-password" className="text-blue-500">Forgot Password</Link>
+                    </div>
                 </div>
                 <Separator/>
                 <p className="mt-2">
