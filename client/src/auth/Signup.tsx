@@ -38,7 +38,7 @@ const Signup = () => {
 
     return(
         <>
-          <div className="flex items-center justify-center ">
+          <div className="flex items-center justify-center Signup">
             <form onSubmit={loginSubmitHandler} className="md:p-8 w-full max-w-md md:border border-gray-200 rounded-lg mx-4">
 
                 <div className="mb-4 ">

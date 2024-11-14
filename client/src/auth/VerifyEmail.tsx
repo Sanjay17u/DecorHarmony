@@ -35,7 +35,7 @@ const VerifyEmail = () => {
 
     return(
         <>
-          <div className="flex items-center justify-center w-full">
+          <div className="flex items-center justify-center w-full VerifyEmail">
             <div className="p-8 rounded-md w-full max-w-md flex flex-col gap-10 border border-gray-200">
                 <div className="text-center">
                     <h1 className="font-extrabold text-2xl">Verify Your Email</h1>
