@@ -29,7 +29,7 @@ const appRouter = createBrowserRouter([
 
 
       {
-        path: "/SearchPage/:id",
+        path: "/SearchPage/:text",
         element: <SearchPage/>
       },
 
