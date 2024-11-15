@@ -23,6 +23,7 @@ const HeroSection = () => {
           <Input
             type="text"
             value={searchText}
+            placeholder="Search your products"
             onChange={(e) => setSearchText(e.target.value)}
             className="pl-10 shadow-lg w-full sm:w-auto"
           />
