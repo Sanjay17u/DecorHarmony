@@ -41,6 +41,7 @@ const Profile = () => {
 
   const updateProfileHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(profileData)
     // Update Profile Api Implementation
   };
 
