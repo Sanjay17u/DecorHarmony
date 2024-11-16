@@ -31,7 +31,7 @@ const DecorDetail = () => {
             </div>
           </div>
         </div>
-        
+        <M
       </div>
     </div>
   );
