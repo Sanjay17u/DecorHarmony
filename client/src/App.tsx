@@ -9,6 +9,7 @@ import HeroSection from './components/HeroSection'
 import MainLayout from './layout/MainLayout'
 import Profile from './components/Profile'
 import SearchPage from './components/SearchPage'
+import DecorDetail from './components/ui/DecorDetails'
 
 
 const appRouter = createBrowserRouter([
@@ -31,6 +32,12 @@ const appRouter = createBrowserRouter([
       {
         path: "/SearchPage/:text",
         element: <SearchPage/>
+      },
+
+
+      {
+        path: "/DecorDetail/:id",
+        element: <DecorDetail/>
       },
 
       
