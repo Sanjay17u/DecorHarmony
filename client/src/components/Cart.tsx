@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { useState } from "react";
+import CheckConfirmPage from "./CheckoutConfirmPage";
 
 const Cart = () => {
     const [open, setOpen] = useState<boolean>(false)
