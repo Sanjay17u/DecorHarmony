@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import Image from "@/assets/HeroImage.jpg";
@@ -25,9 +26,11 @@ const AvailableMenue = () => {
               </h3>
             </CardContent>
             <CardFooter className="flex justify-start p-4 -mt-3">
+              <Link to={`/Cart/`}>
               <Button className="w-full bg-orange hover:bg-hoverOrange">
                 Add to Cart
               </Button>
+              </Link>
             </CardFooter>
           </Card>
         </div>
