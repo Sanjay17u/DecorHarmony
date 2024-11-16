@@ -9,7 +9,7 @@ import HeroSection from './components/HeroSection'
 import MainLayout from './layout/MainLayout'
 import Profile from './components/Profile'
 import SearchPage from './components/SearchPage'
-import DecorDetail from './components/ui/DecorDetails'
+import DecorDetail from './components/DecorDetails'
 
 
 const appRouter = createBrowserRouter([

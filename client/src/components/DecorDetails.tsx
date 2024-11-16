@@ -1,6 +1,7 @@
 import Image from "@/assets/HeroImage.jpg";
-import { Badge } from "./badge";
+import { Badge } from "../components/ui/badge";
 import { Timer } from "lucide-react";
+import AvailableMenue from "./AvailableMenue";
 
 const DecorDetail = () => {
   return (
@@ -31,7 +32,7 @@ const DecorDetail = () => {
             </div>
           </div>
         </div>
-        <M
+        <AvailableMenue/>
       </div>
     </div>
   );
