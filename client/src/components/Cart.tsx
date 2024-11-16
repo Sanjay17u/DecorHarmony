@@ -77,7 +77,7 @@ const Cart = () => {
             </TableRow>
           </TableBody>
           <TableFooter>
-            <TableRow>
+            <TableRow className="font-bold">
               <TableCell className="text-left" colSpan={5}>
                 Total
               </TableCell>
