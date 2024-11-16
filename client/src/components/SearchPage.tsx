@@ -59,7 +59,7 @@ const SearchPage = () => {
               </div>
               {/* Resturant Cards */}
               <div className="grid md:grid-cols-3 gap-4">
-                {[1, 2, 3].map((itsm: number, idx: number) => (
+                {[1, 2, 3].map((item: number, idx: number) => (
                   <Card className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300">
                     <div className="relative">
                       <AspectRatio ratio={16 / 6}>
