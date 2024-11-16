@@ -10,6 +10,7 @@ import MainLayout from './layout/MainLayout'
 import Profile from './components/Profile'
 import SearchPage from './components/SearchPage'
 import DecorDetail from './components/DecorDetails'
+import Cart from './components/Cart'
 
 
 const appRouter = createBrowserRouter([
@@ -67,6 +68,11 @@ const appRouter = createBrowserRouter([
   {
     path: "/VerifyEmail",
     element: <VerifyEmail/>
+  },
+
+  {
+    path: "/Cart",
+    element: <Cart/>
   },
 
 

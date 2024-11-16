@@ -182,7 +182,7 @@ const MobileNavbar = () => {
             <span>Order</span>
           </Link>
           <Link
-            to="/profile"
+            to="/Cart"
             className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
           >
             <ShoppingCart />
