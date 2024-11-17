@@ -11,6 +11,7 @@ import Profile from './components/Profile'
 import SearchPage from './components/SearchPage'
 import DecorDetail from './components/DecorDetails'
 import Cart from './components/Cart'
+import Marketplace from './admin/Marketplace'
 
 
 const appRouter = createBrowserRouter([
@@ -35,13 +36,28 @@ const appRouter = createBrowserRouter([
         element: <SearchPage/>
       },
 
+      
+      {
+        path: "/Cart",
+        element: <Cart/>
+      },
+
+      
+      {
+        path: "/admin/marketplace",
+        element: <Marketplace/>
+      },
+
+
+      // Admin Service Started
 
       {
         path: "/DecorDetail/:id",
         element: <DecorDetail/>
       },
-
       
+
+
     ]
   },
 
@@ -70,10 +86,7 @@ const appRouter = createBrowserRouter([
     element: <VerifyEmail/>
   },
 
-  {
-    path: "/Cart",
-    element: <Cart/>
-  },
+
 
 
 ])
