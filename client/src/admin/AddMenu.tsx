@@ -14,7 +14,7 @@ import { Loader2, Plus } from "lucide-react";
 import { FormEvent, useState } from "react";
 import Image from "@/assets/HeroImage.jpg";
 import EditMenu from "./EditMenu";
-import { MenuFormSchema } from "@/schema/menuSchema"
+import { MenuFormSchema, menuSchema } from "@/schema/menuSchema"
 
 interface Menu {
   title: string;
@@ -37,6 +37,12 @@ const menus: Menu[] = [
     description: "Lorem ipsum dolor sit amet.",
     price: 80,
     image: Image
+  },
+  {
+    title: 'Lamp',
+    description: "Lorem ipsum dolor sit amet.",
+    price: 70,
+    image: Image
   }
 ];
 
@@ -51,6 +57,7 @@ const AddMenu = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
+  const [error, setError] = useState<Partial<MenuFormSchema>>({})
   const loading = false;
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +73,14 @@ const AddMenu = () => {
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(input);
+    const result = menuSchema.safeParse(input)
+    if(!result.success) {
+      const fieldErrors = result.error.formErrors.fieldErrors
+      setError(fieldErrors as Partial<MenuFormSchema>)
+      return;
+    }
+
+    // api start here
   };
 
   return (
@@ -100,6 +115,7 @@ const AddMenu = () => {
                     placeholder="Enter menu name"
                     className="mt-2"
                   />
+                  {error && <span className="text-sm font-medium text-red-600">{error.title}</span>}
                 </div>
                 <div>
                   <Label>Description</Label>
@@ -111,6 +127,7 @@ const AddMenu = () => {
                     placeholder="Enter menu description"
                     className="mt-2"
                   />
+                  {error && <span className="text-sm font-medium text-red-600">{error.description}</span>}
                 </div>
                 <div>
                   <Label>Price in (₹)</Label>
@@ -122,6 +139,7 @@ const AddMenu = () => {
                     placeholder="Enter menu price"
                     className="mt-2"
                   />
+                  {error && <span className="text-sm font-medium text-red-600">{error.price}</span>}
                 </div>
                 <div>
                   <Label>Upload Menu Image</Label>
@@ -131,6 +149,7 @@ const AddMenu = () => {
                     className="mt-2"
                     onChange={(e) => setInput({ ...input, image: e.target.files?.[0] || undefined })}
                   />
+                  {error && <span className="text-sm font-medium text-red-600">{error.image?.name}</span>}
                 </div>
                 <DialogFooter className="mt-5">
                   {loading ? (
