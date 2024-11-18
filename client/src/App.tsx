@@ -13,6 +13,7 @@ import DecorDetail from './components/DecorDetails'
 import Cart from './components/Cart'
 import Marketplace from './admin/Marketplace'
 import AddMenu from './admin/AddMenu'
+import Orders from './admin/Orders'
 
 
 const appRouter = createBrowserRouter([
@@ -62,6 +63,11 @@ const appRouter = createBrowserRouter([
       {
         path: "/admin/menu",
         element: <AddMenu/>
+      },
+
+      {
+        path: "/admin/orders",
+        element: <Orders/>
       },
 
 
