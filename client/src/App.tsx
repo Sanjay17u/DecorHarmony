@@ -12,6 +12,7 @@ import SearchPage from './components/SearchPage'
 import DecorDetail from './components/DecorDetails'
 import Cart from './components/Cart'
 import Marketplace from './admin/Marketplace'
+import AddMenu from './admin/AddMenu'
 
 
 const appRouter = createBrowserRouter([
@@ -42,6 +43,15 @@ const appRouter = createBrowserRouter([
         element: <Cart/>
       },
 
+      {
+        path: "/DecorDetail/:id",
+        element: <DecorDetail/>
+      },
+      
+      
+      
+      // Admin Service Started
+      
       
       {
         path: "/admin/marketplace",
@@ -49,13 +59,10 @@ const appRouter = createBrowserRouter([
       },
 
 
-      // Admin Service Started
-
       {
-        path: "/DecorDetail/:id",
-        element: <DecorDetail/>
+        path: "/admin/menu",
+        element: <AddMenu/>
       },
-      
 
 
     ]
