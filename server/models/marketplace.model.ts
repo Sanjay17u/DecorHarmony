@@ -49,6 +49,6 @@ const marketplaceSchema = new mongoose.Schema<IMarketplaceDocument>({
     },
     menus:[{type:mongoose.Schema.Types.ObjectId, ref:'Menu'}],
     
-})
+},{timestamps:true})
 
 export const Marketplace = mongoose.model("Marketplace", marketplaceSchema)
