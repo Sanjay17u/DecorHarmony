@@ -14,6 +14,7 @@ import Cart from './components/Cart'
 import Marketplace from './admin/Marketplace'
 import AddMenu from './admin/AddMenu'
 import Orders from './admin/Orders'
+import Success from './components/ui/Success'
 
 
 const appRouter = createBrowserRouter([
@@ -47,6 +48,11 @@ const appRouter = createBrowserRouter([
       {
         path: "/DecorDetail/:id",
         element: <DecorDetail/>
+      },
+
+      {
+        path: "/user/orders",
+        element: <Success/>
       },
       
       
