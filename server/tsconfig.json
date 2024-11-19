@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",             // Latest ECMAScript version
+      "module": "CommonJS",           // Use CommonJS module system (not ESModules)
+      "moduleResolution": "Node",     // Node.js specific resolution strategy
+      "esModuleInterop": true,        // To support interoperability with CommonJS modules
+      "skipLibCheck": true,           // Skip type checking of declaration files
+      "strict": true                  // Enable strict type-checking
+    },
+    "include": ["server/**/*.ts"],     // Include all `.ts` files in the `server` folder
+    "exclude": ["node_modules"]        // Exclude `node_modules`
+  }
+  
