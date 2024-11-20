@@ -221,6 +221,9 @@ export const checkAuth = async (req:Request, res:Response) => {
 
 export const updateProfile = async (req:Request, res:Response) => {
   try {
+    const userId = req.id;
+    const {fullname, email, address, city, country, profilePitcure} = req.body
+    // upload image on cloudinary
     
   } catch (error) {
     
