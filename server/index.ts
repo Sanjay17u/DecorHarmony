@@ -7,6 +7,7 @@ import coockieParser from 'cookie-parser'
 import cors from 'cors'
 import userRoute from './routes/user.route'
 import marketplaceRoute from './routes/marketplace.route'
+import menuRoute from './routes/menu.route'
 dotenv.config()
 
 
@@ -25,6 +26,7 @@ app.use(cors(corsOption))
 // api's
 app.use("/api/v1/user", userRoute)
 app.use("/api/v1/marketplace", marketplaceRoute)
+app.use("/api/v1/menu", menuRoute)
 
 app.listen(PORT, () => {
     connectDB()
