@@ -47,24 +47,26 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<Response> => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     
     if (!user) {
-      return res.status(400).json({
+       res.status(400).json({
         success: false,
         message: "Incorrect email or password",
       });
+      return
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(400).json({
+       res.status(400).json({
         success: false,
         message: "Incorrect email or password",
       });
+      return
     }
 
     generateToken(res, user);
@@ -74,20 +76,22 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     // Send User Without Password
     const userWithoutPassword = await User.findOne({ email }).select("-password");
     
-    return res.status(200).json({
+     res.status(200).json({
       success: true,
       message: `Welcome back ${user.fullname}`,
       user: userWithoutPassword,
     });
+    return
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+     res.status(500).json({ message: "Internal Server Error" });
   }
+  return
 };
 
 
 
-export const verifyEmail = async (req: Request, res: Response): Promise<Response> => {
+export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
   try {
     const { verificationCode } = req.body;
 
@@ -99,10 +103,11 @@ export const verifyEmail = async (req: Request, res: Response): Promise<Response
 
     // Check if the user was found
     if (!user) {
-      return res.status(400).json({
+       res.status(400).json({
         success: false,
         message: "Invalid or expired verification token",
       });
+      return
     }
 
     // Now safely update the user object
@@ -114,40 +119,40 @@ export const verifyEmail = async (req: Request, res: Response): Promise<Response
 
     await sendWelcomeEmail(user.email as string, user.fullname as string)
 
-    return res.status(200).json({
+     res.status(200).json({
       success: true,
       message: "Email verified successfully!",
       user,
-    });
+    }); return
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+     res.status(500).json({ message: "Internal Server Error" });
+  } return
 };
 
 
-export const logout = async (_: Request, res: Response): Promise<Response> => {
+export const logout = async (_: Request, res: Response): Promise<void> => {
   try {
-    return res.clearCookie("token").status(200).json({
+     res.clearCookie("token").status(200).json({
       success: true,
       message: "Logged out successfully.",
-    });
+    }); return
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+     res.status(500).json({ message: "Internal Server Error" });
+  } return
 };
 
-export const forgotPassword = async (req: Request, res: Response): Promise<Response> => {
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({
+       res.status(400).json({
         success: false,
         message: "User doesn't exist",
-      });
+      }); return
     }
 
     const resetToken = crypto.randomBytes(40).toString("hex");
@@ -159,17 +164,17 @@ export const forgotPassword = async (req: Request, res: Response): Promise<Respo
     // send email
     await sendPasswordResetEmail(user.email as string, `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`)
 
-    return res.status(200).json({
+     res.status(200).json({
       success: true,
       message: "Password reset link set to your email",
-    });
+    }); return
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+     res.status(500).json({ message: "Internal Server Error" });
+  } return
 };
 
-export const resetPassword = async (req: Request, res: Response): Promise<Response> => {
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
   try {
     const { token } = req.params;
     const { newPassword } = req.body;
@@ -182,10 +187,10 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
 
     // Check if the user exists or the token is invalid/expired
     if (!user) {
-      return res.status(400).json({
+       res.status(400).json({
         success: false,
         message: "Invalid or expired reset token",
-      });
+      }); return
     }
 
     // Update the user's password
@@ -200,14 +205,14 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
     await sendResetSuccessEmail(user.email as string)
 
     // Send success response
-    return res.status(200).json({
+     res.status(200).json({
       success: true,
       message: "Password reset successfully.",
-    });
+    }); return
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
+     res.status(500).json({ message: "Internal Server Error" });
+  } return
 };
 
 export const checkAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -233,7 +238,7 @@ export const checkAuth = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const updateProfile = async (req:Request, res:Response) => {
+export const updateProfile = async (req:Request, res:Response): Promise<void> => {
   try {
     const userId = req.id;
     const {fullname, email, address, city, country, profilePitcure} = req.body
@@ -243,11 +248,12 @@ export const updateProfile = async (req:Request, res:Response) => {
       const updatedData = {fullname, email, address, city, country, profilePitcure}
 
       const user = await User.findByIdAndUpdate(userId, updatedData, {new:true}).select("-password")
-      return res.status(200).json({
+       res.status(200).json({
         success:true,
         user,
         message: "Profile updated successfully"
       })
+      return
 
   } catch (error) {
     
