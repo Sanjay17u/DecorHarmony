@@ -13,7 +13,7 @@ export const isAuthenticated = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {  // Return type should be Promise<void>
+): Promise<void> => {  
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -24,10 +24,10 @@ export const isAuthenticated = async (
       return; 
     }
 
-    // Verify the token
+    
     const decode = jwt.verify(token, process.env.SECRET_KEY!) as jwt.JwtPayload;
 
-    // Check if decoding was successful
+    
     if (!decode) {
       res.status(401).json({
         success: false,

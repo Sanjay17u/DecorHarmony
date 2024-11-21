@@ -16,6 +16,7 @@ type CartItems = {
 };
 
 export interface IOrder extends Document {
+  save(): unknown;
   user: mongoose.Schema.Types.ObjectId;
   marketplace: mongoose.Schema.Types.ObjectId;
   deliverydetails: DeliveryDetails;
@@ -27,6 +28,8 @@ export interface IOrder extends Document {
     | "preparing"
     | "outfordelivery"
     | "delivered";
+  paymentStatus: 'successful' | 'failed';
+  paymentRequestId: string;  
 }
 
 const orderSchema = new mongoose.Schema<IOrder>(
@@ -41,28 +44,41 @@ const orderSchema = new mongoose.Schema<IOrder>(
       required: true,
     },
     deliverydetails: {
-      email:{type:String, required:true}, 
-      name:{type:String, required:true},
-      address:{type:String, required:true},
-      city:{type:String, required:true} 
+      email: { type: String, required: true },
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
     },
-    cartItems:[
-        {
-            menuID: {type:String, required:true},
-            name: {type:String, required:true},
-            Image: {type:String, required:true},
-            price: {type:Number, required:true},
-            quantity: {type:Number, required:true},
-        }
+    cartItems: [
+      {
+        menuID: { type: String, required: true },
+        name: { type: String, required: true },
+        Image: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+      },
     ],
-    totalAmount:Number,
-    status:{
-        type:String,
-        enum:["pending" , "confirmed" , "preparing" , "outfordelivery" , "delivery"],
-        required:true
-    }
+    totalAmount: Number,
+    status: {
+      type: String,
+      enum: [
+        "pending",
+        "confirmed",
+        "preparing",
+        "outfordelivery",
+        "delivered",
+        "failed", 
+      ],
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["successful", "failed"],
+      default: "failed",
+    },
+    paymentRequestId: { type: String, required: true },
   },
   { timestamps: true }
 );
 
-export const Order = mongoose.model("Order", orderSchema);
+export const Order = mongoose.model<IOrder>("Order", orderSchema);
