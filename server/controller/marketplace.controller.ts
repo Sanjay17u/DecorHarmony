@@ -5,7 +5,7 @@ import uploadImageOnCloudinary from "../utils/imageUpload";
 import { Order } from "../models/order.model";
 
 
-export const createMarketplace = async (req: Request, res: Response) => {
+export const createMarketplace = async (req: Request, res: Response): Promise<void> => {
     try {
         const { productName, productCategory, productSKU, stockQuantity, productPrice } = req.body;
         const file = req.file;
@@ -13,16 +13,18 @@ export const createMarketplace = async (req: Request, res: Response) => {
 
         const marketplace = await Marketplace.findOne({ user: req.id });
         if (marketplace) {
-            return res.status(400).json({
+             res.status(400).json({
                 success: false,
                 message: "Marketplace already exist for this user"
-            })
+            }) 
+            return
         }
         if (!file) {
-            return res.status(400).json({
+             res.status(400).json({
                 success: false,
                 message: "Image is required"
             })
+            return
         }
         const imageUrl = await uploadImageOnCloudinary(file as Express.Multer.File);
         await Marketplace.create({
@@ -34,45 +36,46 @@ export const createMarketplace = async (req: Request, res: Response) => {
             productPrice,
             imageUrl
         });
-        return res.status(201).json({
+         res.status(201).json({
             success: true,
             message: "Marketplace Added"
-        });
+        }); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    } return
 }
 
 
-export const getMarketplace = async (req: Request, res: Response) => {
+export const getMarketplace = async (req: Request, res: Response): Promise<void> => {
     try {
         const marketplace = await Marketplace.findOne({ user: req.id }).populate('menus');
         if (!marketplace) {
-            return res.status(404).json({
+             res.status(404).json({
                 success: false,
                 marketplace:[],
                 message: "Marketplace not found"
             })
+            return
         };
-        return res.status(200).json({ success: true, marketplace });
+         res.status(200).json({ success: true, marketplace }); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    } return
 }
 
 
-export const updateMarketplace = async (req: Request, res: Response) => {
+export const updateMarketplace = async (req: Request, res: Response): Promise<void> => {
     try {
         const { productName, productCategory, productSKU, stockQuantity, productPrice } = req.body;
         const file = req.file;
         const marketplace = await Marketplace.findOne({ user: req.id });
         if (!marketplace) {
-            return res.status(404).json({
+             res.status(404).json({
                 success: false,
                 message: "Marketplace not found"
-            })
+            }); return
         };
         marketplace.productName = productName;
         marketplace.productCategory = JSON.parse(productCategory);
@@ -85,66 +88,66 @@ export const updateMarketplace = async (req: Request, res: Response) => {
             marketplace.imageUrl = imageUrl;
         }
         await marketplace.save();
-        return res.status(200).json({
+         res.status(200).json({
             success: true,
             message: "Marketplace updated",
             marketplace
-        })
+        }); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    }; return
 }
 
 
-export const getMarketplaceOrder = async (req: Request, res: Response) => {
+export const getMarketplaceOrder = async (req: Request, res: Response): Promise<void> => {
     try {
         const marketplace = await Marketplace.findOne({ user: req.id });
         if (!marketplace) {
-            return res.status(404).json({
+             res.status(404).json({
                 success: false,
                 message: "Marketplace not found"
-            })
+            }); return
         };
         const orders = await Order.find({ marketplace: marketplace._id }).populate('marketplace').populate('user');
-        return res.status(200).json({
+         res.status(200).json({
             success: true,
             orders
-        });
+        }); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    }; return
 }
 
 
-export const updateOrderStatus = async (req: Request, res: Response) => {
+export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
     try {
         const { orderId } = req.params;
         const { status } = req.body;
         const order = await Order.findById(orderId);
         if (!order) {
-            return res.status(404).json({
+             res.status(404).json({
                 success: false,
                 message: "Order not found"
-            })
+            }); return
         }
         order.status = status;
         await order.save();
-        return res.status(200).json({
+         res.status(200).json({
             success: true,
             status:order.status,
             message: "Status updated"
-        });
+        }); return
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    }; return
 }
 
 
-export const searchMarketplace = async (req: Request, res: Response) => {
+export const searchMarketplace = async (req: Request, res: Response): Promise<void> => {
     try {
         const searchText = req.params.searchText || "";
         const searchQuery = req.query.searchQuery as string || "";
@@ -174,19 +177,19 @@ export const searchMarketplace = async (req: Request, res: Response) => {
         }
         
         const marketplace = await Marketplace.find(query);
-        return res.status(200).json({
+         res.status(200).json({
             success:true,
             data:marketplace
-        });
+        }); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    }; return
 }
 
 
 
-export const getSingleMarketplace = async (req:Request, res:Response) => {
+export const getSingleMarketplace = async (req:Request, res:Response): Promise<void> => {
     try {
         const marketplaceId = req.params.id;
         const marketplace = await Marketplace.findById(marketplaceId).populate({
@@ -194,14 +197,14 @@ export const getSingleMarketplace = async (req:Request, res:Response) => {
             options:{createdAt:-1}
         });
         if(!marketplace){
-            return res.status(404).json({
+             res.status(404).json({
                 success:false,
                 message:"Marketplace not found"
-            })
+            }); return
         };
-        return res.status(200).json({success:true, marketplace});
+         res.status(200).json({success:true, marketplace}); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Internal server error" })
-    }
+         res.status(500).json({ message: "Internal server error" })
+    }; return
 }
