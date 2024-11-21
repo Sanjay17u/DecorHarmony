@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
@@ -7,19 +7,21 @@ import { generateVerificationCode } from "../utils/generateVerificationCode";
 import { generateToken } from "../utils/generateToken";
 import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/email";
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
     const { fullname, email, password, contact } = req.body;
 
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "User already exist with this email.",
       });
+      return; // End the function here
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const verificationToken = generateVerificationCode()
+    const verificationToken = generateVerificationCode();
 
     user = await User.create({
       fullname,
@@ -29,33 +31,34 @@ export const signup = async (req: Request, res: Response) => {
       verificationToken,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
-    generateToken(res,user)
+    generateToken(res, user);
 
     await sendVerificationEmail(email, verificationToken);
 
-    const userWithoutPassword = await User.findOne({ email }).select(
-      "-password"
-    );
-    return res.status(201).json({
+    const userWithoutPassword = await User.findOne({ email }).select("-password");
+    res.status(201).json({
       success: true,
       message: "Account created successfully",
       user: userWithoutPassword,
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
-export const login = async (req: Request, res: Response) => {
+
+export const login = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    
     if (!user) {
       return res.status(400).json({
         success: false,
         message: "Incorrect email or password",
       });
     }
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return res.status(400).json({
@@ -64,14 +67,13 @@ export const login = async (req: Request, res: Response) => {
       });
     }
 
-    generateToken(res, user)
+    generateToken(res, user);
     user.lastLogin = new Date();
     await user.save();
 
     // Send User Without Password
-    const userWithoutPassword = await User.findOne({ email }).select(
-      "-password"
-    );
+    const userWithoutPassword = await User.findOne({ email }).select("-password");
+    
     return res.status(200).json({
       success: true,
       message: `Welcome back ${user.fullname}`,
@@ -83,7 +85,9 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyEmail = async (req: Request, res: Response) => {
+
+
+export const verifyEmail = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { verificationCode } = req.body;
 
@@ -108,7 +112,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     await user.save(); // Save the updated user to the database
 
-      await sendWelcomeEmail(user.email as string, user.fullname as string)
+    await sendWelcomeEmail(user.email as string, user.fullname as string)
 
     return res.status(200).json({
       success: true,
@@ -121,7 +125,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (_: Request, res: Response) => {
+
+export const logout = async (_: Request, res: Response): Promise<Response> => {
   try {
     return res.clearCookie("token").status(200).json({
       success: true,
@@ -133,7 +138,7 @@ export const logout = async (_: Request, res: Response) => {
   }
 };
 
-export const forgotPassword = async (req: Request, res: Response) => {
+export const forgotPassword = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -164,7 +169,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPassword = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { token } = req.params;
     const { newPassword } = req.body;
@@ -205,25 +210,28 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const checkAuth = async (req:Request, res:Response) => {
-    try {
-        const userId = req.id
-        const user = await User.findById(userId).select("-password")
-        if(!user){
-          return res.status(404).json({
-            success: false,
-            message: 'User not found'
-          })
-        }
-        return res.status(200).json({
-           success: true,
-           user
-        });
-    } catch (error) {
-        console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-    }
-}
+export const checkAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+      const userId = req.id;
+      const user = await User.findById(userId).select("-password");
+      
+      if (!user) {
+          res.status(404).json({
+              success: false,
+              message: 'User not found'
+          });
+          return; // Function should end here
+      }
+      
+      res.status(200).json({
+          success: true,
+          user
+      });
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 export const updateProfile = async (req:Request, res:Response) => {
   try {
