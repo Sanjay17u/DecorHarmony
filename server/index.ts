@@ -2,10 +2,11 @@ import express from "express"
 const app = express()
 import dotenv from 'dotenv'
 import connectDB from "./db/connectDB"
-import userRoute from './routes/user.route'
 import bodyParser from "body-parser"
 import coockieParser from 'cookie-parser'
 import cors from 'cors'
+import userRoute from './routes/user.route'
+import marketplaceRoute from './routes/marketplace.route'
 dotenv.config()
 
 
@@ -23,6 +24,7 @@ app.use(cors(corsOption))
 
 // api's
 app.use("/api/v1/user", userRoute)
+app.use("/api/v1/marketplace", marketplaceRoute)
 
 app.listen(PORT, () => {
     connectDB()
