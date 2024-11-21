@@ -148,7 +148,7 @@ export const searchMarketplace = async (req: Request, res: Response) => {
     try {
         const searchText = req.params.searchText || "";
         const searchQuery = req.query.searchQuery as string || "";
-        const selectedCategory = (req.query.selectedCategory as string || "").split(",").filter(cuisine => cuisine);
+        const selectedCategory = (req.query.selectedCategory as string || "").split(",").filter(Category => Category);
         const query: any = {};
         // basic search based on searchText (name ,city, country)
         console.log(selectedCategory);
