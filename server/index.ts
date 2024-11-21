@@ -8,6 +8,7 @@ import cors from 'cors'
 import userRoute from './routes/user.route'
 import marketplaceRoute from './routes/marketplace.route'
 import menuRoute from './routes/menu.route'
+import orderRoute from './routes/order.route'
 dotenv.config()
 
 
@@ -27,6 +28,7 @@ app.use(cors(corsOption))
 app.use("/api/v1/user", userRoute)
 app.use("/api/v1/marketplace", marketplaceRoute)
 app.use("/api/v1/menu", menuRoute)
+app.use("/api/v1/order", orderRoute)
 
 app.listen(PORT, () => {
     connectDB()
