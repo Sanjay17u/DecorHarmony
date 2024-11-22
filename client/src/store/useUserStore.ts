@@ -4,7 +4,7 @@ import axios from "axios";
 import { LoginInputState, SignupInputState } from "@/schema/userSchema";
 import { toast } from "sonner";
 
-const API_END_POINT = "https://food-app-yt.onrender.com/api/v1/user"
+const API_END_POINT = "http://localhost:5173//api/v1/user"
 axios.defaults.withCredentials = true;
 
 type User = {
@@ -31,6 +31,7 @@ type UserState = {
     logout: () => Promise<void>;
     forgotPassword: (email:string) => Promise<void>; 
     resetPassword: (token:string, newPassword:string) => Promise<void>; 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateProfile: (input:any) => Promise<void>; 
 }
 
@@ -52,6 +53,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({ loading: false, user: response.data.user, isAuthenticated: true });
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error(error.response.data.message);
             set({ loading: false });
@@ -69,6 +71,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({ loading: false, user: response.data.user, isAuthenticated: true });
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error(error.response.data.message);
             set({ loading: false });
@@ -86,6 +89,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({ loading: false, user: response.data.user, isAuthenticated: true });
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.success(error.response.data.message);
             set({ loading: false });
@@ -98,6 +102,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
             if (response.data.success) {
                 set({user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
             }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
             set({isAuthenticated: false, isCheckingAuth: false });
         }
@@ -110,6 +115,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({ loading: false, user: null, isAuthenticated: false })
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error:any) {
             toast.error(error.response.data.message);
             set({ loading: false });
@@ -123,6 +129,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({ loading: false });
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error(error.response.data.message);
             set({ loading: false });
@@ -136,11 +143,13 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({ loading: false });
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error(error.response.data.message);
             set({ loading: false });
         }
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateProfile: async (input:any) => {
         try { 
             const response = await axios.put(`${API_END_POINT}/profile/update`, input,{
@@ -152,6 +161,7 @@ export const useUserStore = create<UserState>()(persist((set) => ({
                 toast.success(response.data.message);
                 set({user:response.data.user, isAuthenticated:true});
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error:any) { 
             toast.error(error.response.data.message);
         }
