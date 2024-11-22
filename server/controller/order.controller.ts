@@ -25,7 +25,7 @@ type CheckoutSessionRequest = {
     marketplaceId: string
 }
 
-export const createPaymentRequest = async (req: Request, res: Response) => {
+export const createPaymentRequest = async (req: Request, res: Response): Promise<void> => {
     try {
         const { amount, purpose, redirectUrl, cartItems } = req.body;
 
@@ -50,8 +50,8 @@ export const createPaymentRequest = async (req: Request, res: Response) => {
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
-    }
+         res.status(500).json({ success: false, message: 'Internal server error' });
+    }; return
 };
 
 
@@ -65,23 +65,23 @@ export const createLineItems = (cartItems: CheckoutSessionRequest['cartItems']) 
 };
 
 
-export const getOrders = async (req: Request, res: Response) => {
+export const getOrders = async (req: Request, res: Response): Promise<void> => {
     try {
         // Assuming req.id is the user id
         const orders = await Order.find({ user: req.id }).populate('user').populate('marketplace');
-        return res.status(200).json({
+         res.status(200).json({
             success: true,
             orders
-        });
+        }); return
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
-    }
+         res.status(500).json({ success: false, message: "Internal server error" });
+    }; return
 };
 
 
 
-export const instamojoWebhook = async (req: Request, res: Response) => {
+export const instamojoWebhook = async (req: Request, res: Response): Promise<void> => {
     try {
         const data = req.body;
         const paymentStatus = data.payment_status; 
@@ -95,7 +95,7 @@ export const instamojoWebhook = async (req: Request, res: Response) => {
 
             
             if (!order) {
-                return res.status(404).json({ success: false, message: 'Order not found' });
+                 res.status(404).json({ success: false, message: 'Order not found' }); return
             }
 
             
@@ -107,28 +107,28 @@ export const instamojoWebhook = async (req: Request, res: Response) => {
             // Save the updated order
             await order.save();
 
-            return res.status(200).json({ success: true, message: 'Payment confirmed and order updated' });
+             res.status(200).json({ success: true, message: 'Payment confirmed and order updated' }); return
         } else {
             
             const order = await Order.findById(orderId);
 
             
             if (!order) {
-                return res.status(404).json({ success: false, message: 'Order not found' });
+                 res.status(404).json({ success: false, message: 'Order not found' }); return
             }
 
             
-            order.status = 'failed';  
+            // order.status = 'failed';  
             order.paymentStatus = 'failed';
 
             
             await order.save();
 
-            return res.status(200).json({ success: false, message: 'Payment failed' });
+             res.status(200).json({ success: false, message: 'Payment failed' }); return
         }
     } catch (error) {
         console.error('Error processing webhook:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+         res.status(500).json({ success: false, message: 'Internal server error' }); return
     }
 };
 
