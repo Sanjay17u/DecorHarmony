@@ -26,7 +26,6 @@ import {
   User,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -38,19 +37,19 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "./ui/separator";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
 
 const NavBar = () => {
-  const admin = true;
-  const [loading] = useState(false);
+  // const admin = true;
+  // const [loading] = useState(false);
   const { logout } = useUserStore();
   const navigate = useNavigate();
-
+  const { user, loading } = useUserStore();
 
   const handleLogout = async () => {
-    await logout(); 
-    navigate('/login'); 
+    await logout();
+    navigate("/login");
   };
 
   return (
@@ -68,7 +67,7 @@ const NavBar = () => {
               <Link to="/profile">Profile</Link>
               <Link to="/user/orders">Order</Link>
 
-              {admin && (
+              {user?.admin && (
                 <Menubar>
                   <MenubarMenu>
                     <MenubarTrigger>Dashboard</MenubarTrigger>
@@ -125,7 +124,10 @@ const NavBar = () => {
                     Please Wait
                   </Button>
                 ) : (
-                  <Button onClick={handleLogout} className="bg-orange hover:bg-hoverOrange">
+                  <Button
+                    onClick={handleLogout}
+                    className="bg-orange hover:bg-hoverOrange"
+                  >
                     Logout
                   </Button>
                 )}
@@ -145,7 +147,15 @@ const NavBar = () => {
 export default NavBar;
 
 const MobileNavbar = () => {
-  
+  const { user } = useUserStore();
+  const { logout } = useUserStore();
+  const navigate = useNavigate();
+
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   return (
     <Sheet>
@@ -198,45 +208,48 @@ const MobileNavbar = () => {
             <ShoppingCart />
             <span>Cart (0)</span>
           </Link>
-          <Link
-            to="/admin/menu"
-            className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
-          >
-            <SquareMenu />
-            <span>Menu</span>
-          </Link>
-          <Link
-            to="/admin/marketplace"
-            className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
-          >
-            <Earth />
-            <span>Marketplace</span>
-          </Link>
-          <Link
-            to="/admin/orders"
-            className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
-          >
-            <PackageCheck />
-            <span>Marketplace Orders</span>
-          </Link>
+
+          {user?.admin && (
+            <>
+              <Link
+                to="/admin/menu"
+                className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+              >
+                <SquareMenu />
+                <span>Menu</span>
+              </Link>
+
+              <Link
+                to="/admin/marketplace"
+                className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+              >
+                <Earth />
+                <span>Marketplace</span>
+              </Link>
+              <Link
+                to="/admin/orders"
+                className="flex items-center gap-4 hover:bg-gray-200 px-3 py-2 rounded-lg cursor-pointer hover:text-gray-900 font-medium"
+              >
+                <PackageCheck />
+                <span>Marketplace Orders</span>
+              </Link>
+            </>
+          )}
         </SheetDescription>
         <SheetFooter className="flex sm:flex-col gap-5 sm:justify-start">
-          
-              <div className="flex flex-row items-center gap-2">
-                <Avatar>
-                  <AvatarImage />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <h1 className="font-bold">Sanjay Solanki</h1>
-              </div>
-            
-          
-            <SheetClose asChild>
-              <Button type="submit" className="bg-orange hover:bg-hoverOrange">
-                Logout
-              </Button>
-            </SheetClose>
-          
+          <div className="flex flex-row items-center gap-2">
+            <Avatar>
+              <AvatarImage />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <h1 className="font-bold">Sanjay Solanki</h1>
+          </div>
+
+          <SheetClose asChild>
+            <Button onClick={handleLogout} type="submit" className="bg-orange hover:bg-hoverOrange">
+              Logout
+            </Button>
+          </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>

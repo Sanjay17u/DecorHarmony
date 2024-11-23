@@ -16,6 +16,8 @@ import AddMenu from './admin/AddMenu'
 import Orders from './admin/Orders'
 import Success from './components/ui/Success'
 import { useUserStore } from './store/useUserStore'
+import { useEffect } from 'react'
+import Loading from './components/Loading'
 
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
@@ -137,7 +139,7 @@ const appRouter = createBrowserRouter([
   },
 
   {
-    path: "/VerifyEmail",
+    path: "/verify-email",
     element:<VerifyEmail/>
   },
 
@@ -147,7 +149,12 @@ const appRouter = createBrowserRouter([
 ])
 
 function App() {
+  const {checkAuthentication, isCheckingAuth} = useUserStore()
+  useEffect(() => {
+    checkAuthentication()
+  },[checkAuthentication])
 
+  if(isCheckingAuth) return <Loading/>
   return (
     <main>
       <RouterProvider router={appRouter}>

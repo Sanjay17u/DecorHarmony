@@ -3,12 +3,14 @@ import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import { useRef, useState } from "react"
 import { useUserStore } from "@/store/useUserStore";
+import { useNavigate } from "react-router-dom";
 
 const VerifyEmail = () => {
 
     const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""])
     const inputRef = useRef<(HTMLInputElement | null)[]>([])
     const { verifyEmail, loading, } = useUserStore();
+    const navigate = useNavigate();
 
     const handleChange = (index:number, value:string) => {
         if(/^[a-zA-z0-9]$/.test(value) || value == "") {
@@ -40,7 +42,14 @@ const VerifyEmail = () => {
       const otpCode = otp.join(""); 
   
       if (otpCode.length === 6) {
-        await verifyEmail(otpCode); 
+        try {
+          await verifyEmail(otpCode); 
+          
+          navigate("/login");
+        } catch (error) {
+          
+          console.error("Verification failed", error);
+        }
       }
     };
 
