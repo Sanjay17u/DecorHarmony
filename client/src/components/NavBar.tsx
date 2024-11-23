@@ -38,10 +38,20 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "./ui/separator";
+import { useNavigate } from 'react-router-dom';
+import { useUserStore } from "@/store/useUserStore";
 
 const NavBar = () => {
   const admin = true;
   const [loading] = useState(false);
+  const { logout } = useUserStore();
+  const navigate = useNavigate();
+
+
+  const handleLogout = async () => {
+    await logout(); 
+    navigate('/login'); 
+  };
 
   return (
     <>
@@ -115,7 +125,7 @@ const NavBar = () => {
                     Please Wait
                   </Button>
                 ) : (
-                  <Button className="bg-orange hover:bg-hoverOrange">
+                  <Button onClick={handleLogout} className="bg-orange hover:bg-hoverOrange">
                     Logout
                   </Button>
                 )}
