@@ -5,8 +5,9 @@ import {
   MarketplaceFormSchema,
   marketplaceFromSchema,
 } from "@/schema/marketplaceSchema";
+import { useMarketplaceStore } from "@/store/useMarketplaceStore";
 import { Loader2 } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const Marketplace = () => {
   const [input, setInput] = useState<MarketplaceFormSchema>({
@@ -17,191 +18,199 @@ const Marketplace = () => {
     productprice: 1,
     image: undefined,
   });
-
   const [errors, setErrors] = useState<Partial<MarketplaceFormSchema>>({});
+  const {
+    loading,
+    marketplace,
+    updateMarketplace,
+    createMarketplace,
+    getMarketplace,
+  } = useMarketplaceStore();
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    // Convert value to number if it's a number field
-    if (name === "stockquantity" || name === "productprice") {
-      setInput({
-        ...input,
-        [name]: value ? parseFloat(value) : 0, // If the input is empty, default to 0
-      });
-    } else {
-      setInput({
-        ...input,
-        [name]: value,
-      });
-    }
+    const { name, value, type } = e.target;
+    setInput({ ...input, [name]: type === "number" ? Number(value) : value });
   };
 
-  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(input);
 
-    // Parse stockquantity and productprice before validation
-    const parsedInput = {
-      ...input,
-      stockquantity: parseFloat(input.stockquantity.toString()),
-      productprice: parseFloat(input.productprice.toString()),
-    };
-
-    const result = marketplaceFromSchema.safeParse(parsedInput);
-
+    const result = marketplaceFromSchema.safeParse(input);
     if (!result.success) {
       const fieldErrors = result.error.formErrors.fieldErrors;
       setErrors(fieldErrors as Partial<MarketplaceFormSchema>);
       return;
     }
+    // add marketplace api implementation start from here
+    try {
+      const formData = new FormData();
+      formData.append("productname", input.productname);
+      formData.append("productcategory", JSON.stringify(input.productcategory));
+      formData.append("productsku", input.productsku);
+      formData.append("stockquantity", input.stockquantity.toString());
+      formData.append("productprice", input.productprice.toString());
 
-    // Add Marketplace Api Implementation.
-    console.log(parsedInput);
+      if (input.image) {
+        formData.append("image", input.image);
+      }
+
+      if (marketplace) {
+        // update
+        await updateMarketplace(formData);
+      } else {
+          // create
+          await createMarketplace(formData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(input)
   };
 
-  const loading = false;
-  const productHaiButton = false;
-  const productHaiTitle = false;
+  useEffect(() => {
+    const fetchMarketplace = async () => {
+      await getMarketplace();
+      if (marketplace) {
+        setInput({
+          productname: marketplace.productname || "",
+          productcategory: marketplace.productcategory || [],
+          productsku: marketplace.productsku || "",
+          stockquantity: marketplace.stockquantity || 1,
+          productprice: marketplace.productprice || 1,
+          image: undefined,
+        });
+      }
+    };
+    fetchMarketplace();
+    console.log(marketplace);
+  }, [getMarketplace, marketplace]);
 
   return (
-    <>
-      <div className="max-w-6xl mx-auto my-10">
+    <div className="max-w-6xl mx-auto my-10">
+      <div>
         <div>
-          <div>
-            <h1 className="font-extrabold text-2xl mb-5 flex justify-start">
-              {productHaiTitle
-                ? "Update Marketplace Items"
-                : "List Marketplace Items"}
-            </h1>
-            <form onSubmit={submitHandler}>
-              <div className="md:grid grid-cols-2 gap-6 space-y-2 md:space-y-0">
-                {/* Marketplace Name */}
-                <div>
-                  <Label className="my-3 w-fit flex justify-start">
-                    Product Name
-                  </Label>
-                  <Input
-                    type="text"
-                    value={input.productname}
-                    onChange={changeEventHandler}
-                    name="productname"
-                    placeholder="Enter your decor item name"
-                  />
-                  {errors && (
-                    <span className="text-xs text-red-600">
-                      {errors.productname}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <Label className="my-3 w-fit flex justify-start">
-                    Product Category
-                  </Label>
-                  <Input
-                    type="text"
-                    value={input.productcategory}
-                    onChange={(e) =>
-                      setInput({
-                        ...input,
-                        productcategory: e.target.value.split(","),
-                      })
-                    }
-                    name="productcategory"
-                    placeholder="e.g Glass, Lamp, Mug"
-                  />
-                  {errors && (
-                    <span className="text-xs text-red-600">
-                      {errors.productcategory}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <Label className="my-3 w-fit flex justify-start">
-                    Product SKU
-                  </Label>
-                  <Input
-                    type="text"
-                    value={input.productsku}
-                    onChange={changeEventHandler}
-                    name="productsku"
-                    placeholder="Enter your product dimensions"
-                  />
-                  {errors && (
-                    <span className="text-xs text-red-600">
-                      {errors.productsku}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <Label className="my-3 w-fit flex justify-start">
-                    Stock Quantity
-                  </Label>
-                  <Input
-                    type="number"
-                    value={input.stockquantity}
-                    onChange={changeEventHandler}
-                    name="stockquantity"
-                    placeholder="Enter your stock availability"
-                  />
-                  {errors && (
-                    <span className="text-xs text-red-600">
-                      {errors.stockquantity}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <Label className="my-3 w-fit flex justify-start">
-                    Product Price
-                  </Label>
-                  <Input
-                    type="number"
-                    value={input.productprice}
-                    onChange={changeEventHandler}
-                    name="productprice"
-                    placeholder="Enter your product price"
-                  />
-                  {errors && (
-                    <span className="text-xs text-red-600">
-                      {errors.productprice}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <Label className="my-3 w-fit flex justify-start">
-                    Upload Item Image
-                  </Label>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={changeEventHandler}
-                    name="image"
-                  />
-                  {errors.image && typeof errors.image === "string" && (
-                    <span className="text-xs text-red-600">{errors.image}</span>
-                  )}
-                </div>
-              </div>
-              <div className="my-5 w-fit">
-                {loading ? (
-                  <Button
-                    disabled
-                    className="bg-orange hover:bg-hoverOrange flex"
-                  >
-                    <Loader2 className="animate-spin" />
-                    Please Wait
-                  </Button>
-                ) : (
-                  <Button className="bg-orange hover:bg-hoverOrange flex">
-                    {productHaiButton ? "Update Your Item" : "List Your Item"}
-                  </Button>
+          <h1 className="font-extrabold text-2xl mb-5">Add Marketplace</h1>
+          <form onSubmit={submitHandler}>
+            <div className="md:grid grid-cols-2 gap-6 space-y-2 md:space-y-0">
+              {/* Product Name */}
+              <div>
+                <Label className="flex justify-start mb-2">Product Name</Label>
+                <Input
+                  type="text"
+                  name="productname"
+                  value={input.productname}
+                  onChange={changeEventHandler}
+                  placeholder="Enter product name"
+                />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.productname}
+                  </span>
                 )}
               </div>
-            </form>
-          </div>
+              <div>
+                <Label className="flex justify-start mb-2">Product SKU</Label>
+                <Input
+                  type="text"
+                  name="productsku"
+                  value={input.productsku}
+                  onChange={changeEventHandler}
+                  placeholder="Enter product SKU"
+                />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.productsku}
+                  </span>
+                )}
+              </div>
+              <div>
+                <Label className="flex justify-start mb-2">Product Category</Label>
+                <Input
+                  type="text"
+                  name="productcategory"
+                  value={input.productcategory.join(",")}
+                  onChange={(e) =>
+                    setInput({
+                      ...input,
+                      productcategory: e.target.value.split(","),
+                    })
+                  }
+                  placeholder="e.g. Electronics, Gadgets"
+                />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.productcategory}
+                  </span>
+                )}
+              </div>
+              <div>
+                <Label className="flex justify-start mb-2">Stock Quantity</Label>
+                <Input
+                  type="number"
+                  name="stockquantity"
+                  value={input.stockquantity}
+                  onChange={changeEventHandler}
+                  placeholder="Enter stock quantity"
+                />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.stockquantity}
+                  </span>
+                )}
+              </div>
+              <div>
+                <Label className="flex justify-start mb-2">Product Price</Label>
+                <Input
+                  type="number"
+                  name="productprice"
+                  value={input.productprice}
+                  onChange={changeEventHandler}
+                  placeholder="Enter product price"
+                />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.productprice}
+                  </span>
+                )}
+              </div>
+              <div>
+                <Label className="flex justify-start mb-2">Upload Product Image</Label>
+                <Input
+                  onChange={(e) =>
+                    setInput({
+                      ...input,
+                      image: e.target.files?.[0] || undefined,
+                    })
+                  }
+                  type="file"
+                  accept="image/*"
+                  name="image"
+                />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.image?.name}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="my-5 w-fit">
+              {loading ? (
+                <Button disabled className="bg-orange hover:bg-hoverOrange">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </Button>
+              ) : (
+                <Button className="bg-orange hover:bg-hoverOrange">
+                  {marketplace
+                    ? "Update Your Product"
+                    : "Add Your Product"}
+                </Button>
+              )}
+            </div>
+          </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

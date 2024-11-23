@@ -5,11 +5,13 @@ import uploadImageOnCloudinary from "../utils/imageUpload";
 import { Order } from "../models/order.model";
 
 
+
 export const createMarketplace = async (req: Request, res: Response): Promise<void> => {
     try {
         const { productName, productCategory, productSKU, stockQuantity, productPrice } = req.body;
         const file = req.file;
- 
+
+        console.log(productName, productCategory, productSKU, stockQuantity, productPrice)
 
         const marketplace = await Marketplace.findOne({ user: req.id });
         if (marketplace) {
@@ -30,7 +32,7 @@ export const createMarketplace = async (req: Request, res: Response): Promise<vo
         await Marketplace.create({
             user: req.id,
             productName,
-            productCategory:JSON.parse(productCategory),
+            productCategory,
             productSKU,
             stockQuantity,
             productPrice,
@@ -78,7 +80,7 @@ export const updateMarketplace = async (req: Request, res: Response): Promise<vo
             }); return
         };
         marketplace.productName = productName;
-        marketplace.productCategory = JSON.parse(productCategory);
+        marketplace.productCategory = productCategory;
         marketplace.productSKU = productSKU;
         marketplace.stockQuantity = stockQuantity;
         marketplace.productPrice = productPrice;
