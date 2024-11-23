@@ -20,9 +20,19 @@ app.use(express.urlencoded({ extended:true, limit:'10mb' }))
 app.use(coockieParser())
 const corsOption = {
     origin:"http://localhost:5173",
-    credential:true
+    methods: ['GET', 'POST'],
+    credentials:true
 }
 app.use(cors(corsOption))
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');  // Frontend URL
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');  // If you want to send cookies
+    next();
+  });
+  
 
 // api's
 app.use("/api/v1/user", userRoute)

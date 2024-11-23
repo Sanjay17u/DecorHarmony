@@ -2,12 +2,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import { useRef, useState } from "react"
+import { useUserStore } from "@/store/useUserStore";
 
 const VerifyEmail = () => {
 
     const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""])
     const inputRef = useRef<(HTMLInputElement | null)[]>([])
-    const [loading] = useState(false)
+    const { verifyEmail, loading, } = useUserStore();
 
     const handleChange = (index:number, value:string) => {
         if(/^[a-zA-z0-9]$/.test(value) || value == "") {
@@ -33,6 +34,16 @@ const VerifyEmail = () => {
         }
     }
 
+
+    const handleVerify = async (e: React.FormEvent) => {
+      e.preventDefault();
+      const otpCode = otp.join(""); 
+  
+      if (otpCode.length === 6) {
+        await verifyEmail(otpCode); 
+      }
+    };
+
     return(
         <>
           <div className="flex items-center justify-center w-full VerifyEmail">
@@ -41,7 +52,7 @@ const VerifyEmail = () => {
                     <h1 className="font-extrabold text-2xl">Verify Your Email</h1>
                     <p className="text-sm text-gray-600">Enter the 6 digit code sent to your email address</p>
                 </div>
-                <form>
+                <form onSubmit={handleVerify}>
                     <div className="flex justify-between">
                         {
                             otp.map((letter:string, idx:number) => (

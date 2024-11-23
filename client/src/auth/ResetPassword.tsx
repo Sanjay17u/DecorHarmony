@@ -1,47 +1,74 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Loader2, LockKeyhole, } from "lucide-react"
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2, LockKeyhole } from "lucide-react";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useUserStore } from "@/store/useUserStore"; // Import the store
 
 const ResetPassword = () => {
+    const [newPassword, setNewPassword] = useState<string>(""); // Store the new password
+    const { resetPassword, loading, } = useUserStore(); // Get resetPassword, loading, and error from store
+    const { token } = useParams<{ token: string }>(); // Capture token from URL params (assuming it's passed in URL)
 
-    const [newPassword, setNewPassword] = useState<string>("")
-    const loading = false
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newPassword && token) {
+            await resetPassword(token, newPassword); // Call resetPassword with the token and new password
+        }
+    };
 
-    return(
-        <>
-          <div className="flex items-center justify-center w-full ResetPassword">
-            <form className="flex flex-col gap-5 md:p-8 w-full max-w-md rounded-lg mx-4">
+    return (
+        <div className="flex items-center justify-center w-full ResetPassword">
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-5 md:p-8 w-full max-w-md rounded-lg mx-4"
+            >
                 <div className="text-center">
                     <h1 className="font-extrabold text-2xl mb-2">Reset Password</h1>
-                    <p className="text-sm text-gray-600">Enter your new password and reset old one..!</p>
+                    <p className="text-sm text-gray-600">
+                        Enter your new password and reset your old one..!
+                    </p>
                 </div>
+
+                {/* New Password Input */}
                 <div className="relative w-full">
                     <Input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter your new password"
-                    className="pl-10"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Enter your new password"
+                        className="pl-10"
                     />
-                    <LockKeyhole className="absolute inset-y-2 left-2 text-gray-600 pointer-event-none"/>
+                    <LockKeyhole className="absolute inset-y-2 left-2 text-gray-600 pointer-events-none" />
                 </div>
-                {
-                    loading ? (
-                        <Button disabled><Loader2 className="h-4 w-4 animate-spin"/>Please Wait</Button>
-                    ) : (
-                         <Button className="bg-orange hover:bg-hoverOrange">Reset</Button>   
-                    )
-                }
+
+                {/* Display error if there is one */}
+                {/* {error && (
+                    <p className="text-sm text-red-500 text-center mt-2">{error}</p>
+                )} */}
+
+                {/* Show loading state */}
+                {loading ? (
+                    <Button disabled className="bg-orange hover:bg-hoverOrange">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Please Wait
+                    </Button>
+                ) : (
+                    <Button type="submit" className="bg-orange hover:bg-hoverOrange">
+                        Reset
+                    </Button>
+                )}
+
+                {/* Back to Login Link */}
                 <span className="text-center">
                     Back to{" "}
-                    <Link to="/login" className="text-blue-500">Login</Link>
+                    <Link to="/login" className="text-blue-500">
+                        Login
+                    </Link>
                 </span>
             </form>
-          </div>
-        </>
-    )
-}
+        </div>
+    );
+};
 
-export default ResetPassword
+export default ResetPassword;
