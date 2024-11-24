@@ -77,7 +77,7 @@ const Marketplace = () => {
       if (marketplace) {
         setInput({
           productname: marketplace.productname || "",
-          productcategory: marketplace.productcategory || [],
+          productcategory: marketplace.productcategory ? marketplace.productcategory.map((productcategory: string) => productcategory) : [],
           productsku: marketplace.productsku || "",
           stockquantity: marketplace.stockquantity || 1,
           productprice: marketplace.productprice || 1,

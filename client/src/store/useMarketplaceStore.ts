@@ -11,7 +11,7 @@ export const useMarketplaceStore = create<any>()(
   persist((set) => ({
     loading: false,
     marketplace: null,
-    searchedRestaurant: null,
+    searchedMarketplace: null,
     appliedFilter: [],
     singleMarketplace: null,
     marketplaceOrder: [],
@@ -46,7 +46,7 @@ export const useMarketplaceStore = create<any>()(
     getMarketplace: async () => {
       try {
         set({ loading: true });
-        const response = await axios.get(`${API_END_POINT}/`);
+        const response = await axios.get("http://localhost:8000/api/v1/marketplace/");
         if (response.data.success) {
           set({ marketplace: response.data.marketplace });
         }
@@ -63,7 +63,7 @@ export const useMarketplaceStore = create<any>()(
     updateMarketplace: async (formData: FormData) => {
       try {
         set({ loading: true });
-        const response = await axios.put(`${API_END_POINT}/`, formData, {
+        const response = await axios.put("http://localhost:8000/api/v1/marketplace/", formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
