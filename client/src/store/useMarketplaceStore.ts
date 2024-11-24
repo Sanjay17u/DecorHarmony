@@ -79,6 +79,19 @@ export const useMarketplaceStore = create<any>()(
       }
     },
 
+
+    setAppliedFilter: (value: string) => {
+      set((state) => {
+          const isAlreadyApplied = state.appliedFilter.includes(value);
+          const updatedFilter = isAlreadyApplied ? state.appliedFilter.filter((item) => item !== value) : [...state.appliedFilter, value];
+          return { appliedFilter: updatedFilter }
+      })
+  },
+  resetAppliedFilter: () => {
+      set({ appliedFilter: [] })
+  },
+
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     searchMarketplace: async (searchText: string, searchQuery: string, selectedCategory: any) => {
       try {
