@@ -132,7 +132,7 @@ const Marketplace = () => {
                   onChange={(e) =>
                     setInput({
                       ...input,
-                      productcategory: e.target.value.split(","),
+                      productcategory: e.target.value.split(",").map((category) => category.trim())
                     })
                   }
                   placeholder="e.g. Electronics, Gadgets"

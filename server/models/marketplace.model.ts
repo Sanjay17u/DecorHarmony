@@ -29,7 +29,8 @@ const marketplaceSchema = new mongoose.Schema<IMarketplaceDocument>({
     },
     productCategory:[{
         type:String,
-        required:true
+        required:true,
+        set: (value: any) => Array.isArray(value) ? value : value.split(",").map((item: string) => item.trim())
     }],
     productSKU:{
         type:String,
@@ -45,7 +46,7 @@ const marketplaceSchema = new mongoose.Schema<IMarketplaceDocument>({
     },
     imageUrl:{
         type:String,
-        required:true
+        // required:true
     },
     menus:[{type:mongoose.Schema.Types.ObjectId, ref:'Menu'}],
     
