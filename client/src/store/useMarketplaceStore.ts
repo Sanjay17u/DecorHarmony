@@ -81,9 +81,9 @@ export const useMarketplaceStore = create<any>()(
 
 
     setAppliedFilter: (value: string) => {
-      set((state) => {
+      set((state: { appliedFilter: string[]; }) => {
           const isAlreadyApplied = state.appliedFilter.includes(value);
-          const updatedFilter = isAlreadyApplied ? state.appliedFilter.filter((item) => item !== value) : [...state.appliedFilter, value];
+          const updatedFilter = isAlreadyApplied ? state.appliedFilter.filter((item: string) => item !== value) : [...state.appliedFilter, value];
           return { appliedFilter: updatedFilter }
       })
   },
