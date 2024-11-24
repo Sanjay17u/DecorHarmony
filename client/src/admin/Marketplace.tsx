@@ -8,6 +8,7 @@ import {
 import { useMarketplaceStore } from "@/store/useMarketplaceStore";
 import { Loader2 } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const Marketplace = () => {
   const [input, setInput] = useState<MarketplaceFormSchema>({
@@ -34,38 +35,41 @@ const Marketplace = () => {
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
+    // Validate form input
     const result = marketplaceFromSchema.safeParse(input);
     if (!result.success) {
       const fieldErrors = result.error.formErrors.fieldErrors;
       setErrors(fieldErrors as Partial<MarketplaceFormSchema>);
       return;
     }
-    // add marketplace api implementation start from here
+  
+    // Now submit the form
     try {
       const formData = new FormData();
-      formData.append("productname", input.productname);
-      formData.append("productcategory", JSON.stringify(input.productcategory));
-      formData.append("productsku", input.productsku);
-      formData.append("stockquantity", input.stockquantity.toString());
-      formData.append("productprice", input.productprice.toString());
-
+      formData.append('productname', input.productname);
+      formData.append('productcategory', JSON.stringify(input.productcategory));
+      formData.append('productsku', input.productsku);
+      formData.append('stockquantity', input.stockquantity.toString());
+      formData.append('productprice', input.productprice.toString());
+  
       if (input.image) {
-        formData.append("image", input.image);
+        formData.append('image', input.image);
       }
-
+  
       if (marketplace) {
-        // update
+        // If a marketplace exists, update it
         await updateMarketplace(formData);
       } else {
-          // create
-          await createMarketplace(formData);
+        // Otherwise, create a new marketplace
+        await createMarketplace(formData);
       }
     } catch (error) {
-      console.log(error);
+      console.log('Form submission failed:', error);
+      toast.error('Something went wrong while submitting the form.');
     }
-    console.log(input)
   };
+  
 
   useEffect(() => {
     const fetchMarketplace = async () => {

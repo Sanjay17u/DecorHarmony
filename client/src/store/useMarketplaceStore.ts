@@ -19,21 +19,29 @@ export const useMarketplaceStore = create<any>()(
     createMarketplace: async (formData: FormData) => {
       try {
         set({ loading: true });
-        const response = await axios.post(`${API_END_POINT}/`, formData, {
+        const response = await axios.post("http://localhost:8000/api/v1/marketplace/", formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
+    
+        // Check if the response is successful
         if (response.data.success) {
           toast.success(response.data.message);
+        } else {
+          // If the response is not successful, show the error message
+          toast.error(response.data.message || 'Something went wrong');
         }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
+        // Log the error and show a toast message
+        console.error('Error during marketplace creation:', error);
         toast.error(error.response?.data?.message || "Something went wrong");
       } finally {
         set({ loading: false });
       }
     },
+    
 
     getMarketplace: async () => {
       try {
