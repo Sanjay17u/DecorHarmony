@@ -3,6 +3,10 @@ import uploadImageOnCloudinary from "../utils/imageUpload";
 import {Menu} from "../models/menu.model";
 import { Marketplace } from "../models/marketplace.model";
 import mongoose, { ObjectId } from "mongoose";
+import { Multer } from "multer";
+import upload from "../middlewares/multer";
+
+
 
 export const addMenu = async (req:Request, res:Response): Promise<void> => {
     try {

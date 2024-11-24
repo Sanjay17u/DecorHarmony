@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,6 +16,7 @@ import { FormEvent, useState } from "react";
 import Image from "@/assets/HeroImage.jpg";
 import EditMenu from "./EditMenu";
 import { MenuFormSchema, menuSchema } from "@/schema/menuSchema"
+import { useMenuStore } from "@/store/useMenuStore";
 
 interface Menu {
   title: string;
@@ -58,19 +60,20 @@ const AddMenu = () => {
   const [editOpen, setEditOpen] = useState<boolean>(false);
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
   const [error, setError] = useState<Partial<MenuFormSchema>>({})
-  const loading = false;
+  const {loading, createMenu} = useMenuStore()
+  // const loading = false;
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     if (type === 'number' && name === 'price') {
-      const price = Math.max(0, Number(value)); // Ensure price is not negative
+      const price = Math.max(0, Number(value));
       setInput({ ...input, [name]: price });
     } else {
       setInput({ ...input, [name]: value });
     }
   };
 
-  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(input);
     const result = menuSchema.safeParse(input)
@@ -79,8 +82,17 @@ const AddMenu = () => {
       setError(fieldErrors as Partial<MenuFormSchema>)
       return;
     }
-
-    // api start here
+    // api start yha se
+    try {
+      const formData = new FormData()
+      formData.append("title", input.title)
+      formData.append("description", input.description)
+      formData.append("price", input.price.toString())
+      if (input.image) formData.append("image", input.image);
+      await createMenu(formData)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
@@ -167,7 +179,7 @@ const AddMenu = () => {
             </DialogContent>
           </Dialog>
         </div>
-        {menus.map((menu, idx) => (
+        {menus.map((menu: any, idx: number) => (
           <div className="mt-6 space-y-4" key={idx}>
             <div className="flex flex-col md:flex-row md:items-center md:space-x-4 md:p-4 p-2 shadow-md rounded-lg border">
               <img
